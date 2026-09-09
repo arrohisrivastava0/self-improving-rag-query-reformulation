@@ -1,0 +1,6 @@
+.venv/
+.env
+data/
+backup/
+__pycache__/
+data_backup_review1/

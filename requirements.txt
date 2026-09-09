@@ -1,0 +1,14 @@
+# --- Day 1 ---
+ollama>=0.4.0          # local embeddings only (nomic-embed-text)
+faiss-cpu>=1.8.0       # vector index (if pip fails on Windows, use Python 3.11)
+numpy>=1.26
+datasets>=2.19.0       # HotpotQA download
+tqdm>=4.66.0
+groq>=0.11.0           # cloud LLM calls
+python-dotenv>=1.0.0   # loads GROQ_API_KEY from .env
+
+# --- add later, not needed yet ---
+# langgraph
+# langchain-core
+# ragas
+# sentence-transformers   # for the local preference scorer (Phase 3)
