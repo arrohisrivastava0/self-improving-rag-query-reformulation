@@ -4,3 +4,6 @@ data/
 backup/
 __pycache__/
 data_backup_review1/
+*.pyc
+__pycache__/
+data_backup_review1/
