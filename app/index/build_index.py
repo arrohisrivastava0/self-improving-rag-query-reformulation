@@ -1,13 +1,3 @@
-"""Embed the pooled corpus and store it as a FAISS index.
-
-Run:  python -m app.index.build_index
-Safe to re-run: it rebuilds the index from scratch.
-
-Design notes
-- IndexFlatIP on L2-normalised vectors = exact cosine search (fine for a few thousand docs).
-- The index is saved as raw bytes via serialize_index, because faiss.write_index can fail
-  on Windows paths containing non-ASCII characters (e.g. a user folder with accents).
-"""
 import json
 
 import faiss

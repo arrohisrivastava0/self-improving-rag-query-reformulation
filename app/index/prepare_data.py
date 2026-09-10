@@ -1,15 +1,3 @@
-"""Sample a HotpotQA (distractor setting) subset and build a pooled corpus.
-
-Outputs:
-  data/questions.json  - the EVALUATION questions (gold answers + gold supporting titles)
-  data/corpus.jsonl    - de-duplicated paragraphs pooled from the evaluation questions PLUS
-                         extra questions, so the corpus is ~10k paragraphs and retrieval is
-                         realistically hard (other questions' paragraphs act as distractors).
-
-The evaluation questions are drawn exactly as on Day 1, so they are the SAME 200 questions.
-
-Run:  python -m app.index.prepare_data [--n 200] [--corpus-n 1000]
-"""
 import argparse
 import hashlib
 import json
@@ -65,7 +53,7 @@ def _load_from_cmu():
 def load_raw():
     try:
         return _load_from_hf()
-    except Exception as e:  # network / datasets-version problems
+    except Exception as e: 
         print(f"HF load failed ({e!r}); falling back to direct download.")
         return _load_from_cmu()
 
@@ -75,7 +63,6 @@ def build(n_eval=N_QUESTIONS, n_corpus=N_CORPUS_QUESTIONS, seed=SEED):
     print(f"Loaded {len(rows)} validation questions.")
     n_corpus = max(n_corpus, n_eval)
 
-    # Same call as Day 1 -> identical evaluation questions.
     sample = random.Random(seed).sample(rows, n_eval)
     eval_ids = {r["id"] for r in sample}
     rest = [r for r in rows if r["id"] not in eval_ids]
