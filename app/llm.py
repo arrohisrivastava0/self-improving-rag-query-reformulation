@@ -1,17 +1,3 @@
-"""Groq wrapper used by EVERY LLM call in the project.
-
-Gives you, for free:
-  * disk cache (SQLite)  - an identical call is never sent (or paid for) twice
-  * per-model rate limiter and automatic retry/backoff on 429 / 5xx / network errors
-  * clear stop on DAILY quota exhaustion (DailyQuotaExceeded) - progress is kept in the
-    cache, so just re-run the same command tomorrow and it resumes
-  * token accounting (prompt + completion) - your 'cost' metric for the thesis
-
-Usage:
-    from app.llm import chat
-    r = chat("Say hi", model=AGENT_MODEL)
-    print(r.text, r.prompt_tokens, r.completion_tokens, r.cached)
-"""
 import hashlib
 import json
 import os
@@ -63,7 +49,7 @@ def _client():
         key = os.environ.get("GROQ_API_KEY")
         if not key or key == "your_key_here":
             raise RuntimeError("GROQ_API_KEY missing - copy .env.example to .env and paste your key")
-        _client_obj = Groq(api_key=key, max_retries=0, timeout=90)  # we do our own retries
+        _client_obj = Groq(api_key=key, max_retries=0, timeout=90)  
     return _client_obj
 
 
@@ -121,7 +107,7 @@ def _call_api(model, messages, temperature, max_tokens, reasoning_effort):
             return _client().chat.completions.create(**kwargs)
         except groq.BadRequestError as e:
             if "reasoning_effort" in kwargs and "reasoning" in str(e).lower():
-                _effort_supported = False  # this model/API rejects the parameter; stop sending it
+                _effort_supported = False 
                 print("[llm] reasoning_effort not accepted; continuing without it")
                 continue
             raise
@@ -181,7 +167,7 @@ def chat(
         STATS["api_calls"] += 1
         if text or choice.finish_reason != "length":
             break
-        budget = min(budget * 2, 8192)  # the model 'thought' past the budget; retry with more room
+        budget = min(budget * 2, 8192) 
     STATS["prompt_tokens"] += pt
     STATS["completion_tokens"] += ct
     if not text:

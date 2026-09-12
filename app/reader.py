@@ -1,8 +1,3 @@
-"""The 'reader': answers a question from retrieved passages.
-
-Baseline AND the final pipeline node both use this exact function, so any accuracy
-difference between them comes from RETRIEVAL, not from a different prompt or model.
-"""
 import re
 
 from app.config import GEN_MODEL
