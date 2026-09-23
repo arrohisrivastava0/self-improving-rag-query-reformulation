@@ -256,17 +256,3 @@ The adaptive pipeline also uses more tokens per question than the fixed-depth ba
 This repository is intended for academic/thesis research.
 
 ---
-
-### Save it
-
-In `nano`:
-
-1. `Ctrl+O`
-2. Enter
-3. `Ctrl+X`
-
-Then check:
-
-```bash
-git diff -- README.md
-```
