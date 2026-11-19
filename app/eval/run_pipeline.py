@@ -97,7 +97,7 @@ def main(argv=None):
             rec = sum(set(r["gold_titles"]) <= set(r["retrieved_titles"]) for r in rows)
             tok = sum(r["agent_tokens"] + r["reader_tokens"] for r in rows) / len(rows)
             print(f"\nRECOVERY: {rec}/{len(rows)} of these baseline-failure questions now have every gold paragraph "
-                  f"in the final evidence | mean tokens/question {tok:.0f}")
+                f"in the final evidence | mean tokens/question {tok:.0f}")
     print("\n" + stats_summary())
     print(f"Compare with baseline:  python -m app.eval.compare_recovery data/runs/baseline_k5.jsonl {out}")
 

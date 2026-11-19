@@ -48,7 +48,7 @@ def _client():
 
         key = os.environ.get("GROQ_API_KEY")
         if not key or key == "your_key_here":
-            raise RuntimeError("GROQ_API_KEY missing - copy .env.example to .env and paste your key")
+            raise RuntimeError("GROQ_API_KEY missing - go to .env and paste your key")
         _client_obj = Groq(api_key=key, max_retries=0, timeout=90)  
     return _client_obj
 

@@ -56,6 +56,7 @@ Sufficiency Check
 ```
 
 The system performs inference-time iterative retrieval. It does not update model weights during inference.
+The query router (`use_router` in `PipelineConfig`, `--router` in `run_pipeline.py`) is disabled in all reported runs because every HotpotQA question is multi-hop. It was only sanity-checked with `python -m app.eval.check_router` and is not evaluated end to end.
 
 ## Technology Stack
 
