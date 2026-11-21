@@ -82,8 +82,11 @@ def main():
             x, s = np.mean([tokens(r) for r in rs]), scores(rs, fn)
             lo, hi = boot_ci(s)
             ax.errorbar(x, s.mean(), yerr=[[s.mean() - lo], [hi - s.mean()]], fmt="o", capsize=4)
-            left = label == "Adaptive (1 rewrite)"
-            ax.annotate(label, (x, s.mean()), textcoords="offset points", xytext=(-6 if left else 6, -12), ha="right" if left else "left", fontsize=8)        ax.set_xlim(0, 3800)
+            if label == "Adaptive (1 rewrite)":   # below its own CI so it clears the neighbouring bars
+                ax.annotate(label, (x, lo), textcoords="offset points", xytext=(0, -13), ha="center", fontsize=8)
+            else:
+                ax.annotate(label, (x, s.mean()), textcoords="offset points", xytext=(6, -12), fontsize=8)
+        ax.set_xlim(0, 3800)
         ax.set_xlabel("tokens per question (agent + reader)")
         ax.set_ylabel(ylab)
         ax.grid(alpha=0.3)
