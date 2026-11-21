@@ -7,10 +7,10 @@ import numpy as np
 from app.config import SEED
 from app.eval.metrics import exact_match, f1_score, relaxed_match
 from app.eval.score import load, sign_p
+from app.eval.audit_relaxed import strict_match
 
 N_BOOT = 10000
-METRICS = (("EM", exact_match), ("F1", f1_score), ("Acc", relaxed_match))
-
+METRICS = (("EM", exact_match), ("F1", f1_score), ("Acc", relaxed_match), ("AccStrict", strict_match))
 
 def boot_ci(xs, n_boot=N_BOOT):
     """95% percentile bootstrap CI for the mean of xs (per-question scores or paired differences)."""
@@ -55,11 +55,11 @@ def main(paths):
 
     for a, b in itertools.combinations(names, 2):
         print(f"\n{b} vs {a} (paired)")
-        for lab in ("EM", "Acc"):
+        for lab in ("EM", "Acc", "AccStrict"):      
             d = per[b][lab] - per[a][lab]
             w, l = int((d > 0).sum()), int((d < 0).sum())
             lo, hi = boot_ci(d)
-            print(f"  {lab:<4} diff {d.mean():+.3f} [{lo:+.3f},{hi:+.3f}] | wins {w}, losses {l}, ties {len(d) - w - l}, sign-test p = {sign_p(w, l):.3f}")
+            print(f"  {lab:<9} diff {d.mean():+.3f} [{lo:+.3f},{hi:+.3f}] | wins {w}, losses {l}, ties {len(d) - w - l}, sign-test p = {sign_p(w, l):.3f}")
 
     print("\nCOST (tokens per question)")
     print(f"{'run':<22}{'total':>8}{'agent':>8}{'reader':>8}{'Acc per 1k tok':>16}")
