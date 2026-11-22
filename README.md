@@ -102,8 +102,14 @@ No GPU is required for the embedding/retrieval pipeline.
 │       ├── check_router.py
 │       ├── list_failures.py
 │       ├── peek.py
-│       └── show_trace.py
+│       ├── show_trace.py
+│       ├── stats.py
+│       ├── audit_relaxed.py
+│       ├── answer_errors.py
+│       └── make_report_assets.py
 │
+├── results/
+├── report_assets/
 ├── requirements.txt
 ├── test_setup.py
 └── README.md
@@ -197,17 +203,19 @@ Additional scripts are provided for trace inspection, recovery analysis, failure
 
 The held-out test set contains 100 questions.
 
-| System | EM | F1 | Relaxed Accuracy | All-Gold Retrieval | Tokens / Question |
-|---|---|---|---|---|---|
-| Baseline k=5 | 0.530 | 0.681 | 0.720 | 0.660 | 866 |
-| Baseline k=10 | 0.550 | 0.703 | 0.750 | 0.770 | 1587 |
-| Adaptive pipeline | 0.590 | 0.720 | 0.780 | 0.770 | 2816 |
+| System | EM | F1 | Relaxed Acc | AccStrict | All-Gold | Tokens / Question |
+|---|---|---|---|---|---|---|
+| Closed-book (k=0) | 0.360 | 0.457 | 0.440 | 0.380 | n/a | 296 |
+| Baseline k=5 | 0.530 | 0.681 | 0.720 | 0.560 | 0.660 | 866 |
+| Baseline k=10 | 0.550 | 0.703 | 0.750 | 0.580 | 0.770 | 1587 |
+| Adaptive, 1 rewrite | 0.580 | 0.718 | 0.760 | 0.620 | 0.740 | 2406 |
+| Adaptive, 2 rewrites | 0.590 | 0.720 | 0.780 | 0.640 | 0.770 | 2816 |
 
 The adaptive pipeline recovered all required gold paragraphs in 11 of the 34 questions where the initial k=5 retrieval missed at least one gold paragraph.
 
 No initial k=5 retrieval success was lost by the adaptive pipeline in the held-out test.
 
-The k=10 baseline and adaptive pipeline retrieved all gold paragraphs at the same observed rate (0.770), while their answer-level results differed on this test set.
+The k=10 baseline and adaptive pipeline retrieved all gold paragraphs at the same rate (0.770). Their answer-level differences are not statistically distinguishable on this test set (paired Relaxed Accuracy difference +0.03, 95% CI [-0.03, 0.09]). Against k=5, the adaptive pipeline improves Relaxed Accuracy by +0.06 (6 wins, 0 losses, sign-test p = 0.031) and AccStrict by +0.08 (8 wins, 0 losses, p = 0.008).
 
 ## Failure Analysis
 
@@ -237,7 +245,17 @@ The evaluation reports:
 - All-gold retrieval rate
 - Retrieval/generation token usage
 
-The relaxed accuracy metric is a project-specific evaluation metric and should not be interpreted as the official HotpotQA evaluation metric.
+Relaxed Accuracy is a project-specific metric: a prediction is correct if its normalised tokens are contained in the gold answer (or vice versa) with at most three extra words; yes/no answers must match exactly. AccStrict removes credit for predictions that are only a fragment of the gold answer; it was defined after the test results were seen and is a robustness check.
+
+## Statistical Analysis and Reproducing the Report
+
+```bash
+mkdir -p data/runs && cp results/*.jsonl data/runs/
+python -m app.eval.stats data/runs/baseline_k5_test.jsonl data/runs/baseline_k10_test.jsonl data/runs/pipeline_v3_test.jsonl
+python -m app.eval.audit_relaxed data/runs/baseline_k5_test.jsonl data/runs/pipeline_v3_test.jsonl
+python -m app.eval.answer_errors data/runs/baseline_k0_test.jsonl data/runs/baseline_k5_test.jsonl data/runs/baseline_k10_test.jsonl data/runs/pipeline_v3_test.jsonl
+python -m app.eval.make_report_assets
+```
 
 ## Limitations
 
