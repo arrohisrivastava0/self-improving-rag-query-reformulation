@@ -7,3 +7,5 @@ data_backup_review1/
 *.pyc
 __pycache__/
 data_backup_review1/
+app/eval backup/
+app/index/prepare_data_backup.py
